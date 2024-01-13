@@ -28,9 +28,9 @@ const Select = styled.select`
 `
 
 
-const UseSelectMonedas = ({label, monedas}) => {
+const UseSelectMonedas = ({label, monedas, moneda, setMoneda}) => {
 
-    const[state, setState] = useState("");
+
 
 
   return (
@@ -42,9 +42,9 @@ const UseSelectMonedas = ({label, monedas}) => {
 
                 <Select
                 
-                    value={state}
+                    value={moneda}
                     
-                    onChange={e => setState(e.target.value)}
+                    onChange={e => setMoneda(e.target.value)}
                 
                 >
 

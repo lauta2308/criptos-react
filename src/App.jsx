@@ -1,8 +1,10 @@
-import { useState } from 'react'
+import { useState , useEffect} from 'react'
 import styled from '@emotion/styled'
 import Formulario from './components/Formulario'
+import Resultado from './components/Resultado'
 
 import imgCripto from './img/imagen-criptos.png'
+import Spinner from './components/Spinner'
 
 
 const Contenedor = styled.div`
@@ -61,7 +63,47 @@ const Imagen = styled.img`
 function App() {
 
 
+  const[conversion, setConversion] = useState({});
+  const[resultado, setResultado] = useState({});
+  const[cargando, setCargando] = useState(false)
+
+  useEffect(() => {
+
+    if(Object.keys(conversion).length > 0){
+    
+      setCargando(true)
+      setResultado({})
+      
+
+        const cotizarCripto = async () => {
+          const {moneda, cripto} = conversion;
+
+         const url = `
+          https://min-api.cryptocompare.com/data/pricemultifull?fsyms=${cripto}&tsyms=${moneda}
+          
+          `
+          
+          const respuesta = await fetch(url)
+          const resultado = await respuesta.json()
+          
+         
+          setResultado(resultado.DISPLAY[cripto][moneda])
+          setCargando(false)
+         
+        }
+
+
+        cotizarCripto()
+
+        
+    }
+
+  }, [conversion])
+
+
   return (
+
+      
 
       <Contenedor>
             <Imagen
@@ -73,8 +115,33 @@ function App() {
             <div>
                  <Heading>Cotiza criptomonedas al instante</Heading>
 
-                 <Formulario>
-                 </Formulario>
+         
+                
+                 <Formulario
+                    conversion= {conversion}
+                    setConversion= {setConversion}
+                 
+                 
+                 />
+
+
+                {cargando && 
+                
+                <Spinner />
+                
+                }
+
+                 {resultado.PRICE && 
+                 
+                 <Resultado
+                    resultado = {resultado}
+                 
+                 
+                 />
+
+              
+                 }
+                
 
         
             </div>

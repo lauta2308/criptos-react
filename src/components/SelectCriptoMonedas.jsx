@@ -28,13 +28,12 @@ const Select = styled.select`
 `
 
 
+const SelectCriptoMonedas = ({label, monedas, cripto, setCripto}) => {
 
-const useSelectMonedas = (label, monedas) => {
 
-    const[state, setState] = useState("");
 
-    const SelectMonedas = () => (
-
+  return (
+   
 
             <>
             
@@ -42,9 +41,9 @@ const useSelectMonedas = (label, monedas) => {
 
                 <Select
                 
-                    value={state}
+                    value={cripto}
                     
-                    onChange={e => setState(e.target.value)}
+                    onChange={e => setCripto(e.target.value)}
                 
                 >
 
@@ -52,19 +51,16 @@ const useSelectMonedas = (label, monedas) => {
                 <option value="">Seleccione</option>
                 {monedas.map( opcion => (
                     <option 
-                        key={opcion.id}
-                        value={opcion.id}
-                    >{opcion.nombre}</option>
+                        key={opcion.name}
+                        value={opcion.name}
+                    >{opcion.name}</option>
                 ))}
 
                 </Select>
             
             </>
     )
-    
-    return [state, SelectMonedas];
 
-    
 }
 
-export default useSelectMonedas
+export default SelectCriptoMonedas

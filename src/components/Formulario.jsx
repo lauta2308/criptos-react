@@ -1,7 +1,9 @@
-import React from 'react'
+import {useState, useEffect} from 'react'
 import styled from '@emotion/styled'
 import UseSelectMonedas from './UseSelectMonedas'
+import SelectCriptoMonedas from './SelectCriptoMonedas'
 import {monedas} from '../data/monedas'
+import Error  from './Error'
 
 
 const InputSubmit = styled.input`
@@ -32,34 +34,129 @@ const InputSubmit = styled.input`
 
 
 
-const Formulario = () => {
+const Formulario = ({conversion, setConversion}) => {
+
+  const[error, setError] = useState(false);
+  const[criptos, setCriptos] = useState([]);
+  const[moneda, setMoneda] = useState("");
+  const[cripto, setCripto] = useState("");
 
 
+  useEffect(() => {
 
+      const consultarApi = async () => {
+          const url = 'https://min-api.cryptocompare.com/data/top/mktcapfull?limit=10&tsym=USD';
+
+          const respuesta = await fetch(url);
+
+          const resultado = await respuesta.json();
+
+         const arregloCriptos = resultado.Data.map(cripto => {
+
+              const objeto = {
+                  'name': cripto.CoinInfo.Name,
+                  'fullName': cripto.CoinInfo.FullName
+
+              }
+
+              return objeto;
+
+         })
+          
+          setCriptos(arregloCriptos);
+
+          
+
+      }
+
+
+      consultarApi()
+
+  }, [])
+
+
+  const handleSubmit = e => {
+
+    console.log("validando..")
+      e.preventDefault();
+
+
+      if([cripto, moneda].includes("")){
+        setError(true)
+
+        return;
+      }
+
+      console.log("continua..")
+      setError(false)
+      setConversion({
+        moneda,
+        cripto
+      })
+
+
+  }
 
 
   return (
-   <form action="">
-
-        <UseSelectMonedas
-        
-          label= 'Elige tu moneda'
-          monedas = {monedas}
-        
-        
-        />
 
 
+    <>
+
+    
+              {error && 
+                
+                <Error>
+
+                  Todos los campos son obligatorios
+                  
+                </Error>
+                
+                }
+    
+    
+    
+
+    
+    <form onSubmit={handleSubmit}>
+
+<UseSelectMonedas
+
+  label= 'Elige tu moneda'
+  monedas = {monedas}
+  moneda = {moneda}
+  setMoneda = {setMoneda}
 
 
-        <InputSubmit
-                   type="text"
-                   value="cotizar"
-        
-        />
+/>
+
+<SelectCriptoMonedas
+    
+    label = 'Elige tu criptomoneda'
+    monedas = {criptos}
+    cripto = {cripto}
+    setCripto = {setCripto}
 
 
-   </form>
+/>
+
+
+
+
+<InputSubmit
+           type="submit"
+           value="cotizar"
+
+/>
+
+
+</form>
+    
+    
+    
+    </>
+
+  
   )
 }
 
